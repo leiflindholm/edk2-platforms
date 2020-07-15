@@ -105,11 +105,7 @@ target-specific binutils. These are included with any prepackaged GCC toolchain
    (This step _depends_ on **WORKSPACE** being set as per above.)
 1. Build BaseTools
 
-   `make -C edk2/BaseTools`
-
-   (BaseTools can currently not be built in parallel, so do not specify any `-j`
-   option, either on the command line or in a **MAKEFLAGS** environment
-   variable.)
+   `make -C edk2/BaseTools -j`
 
 ### Build options
 There are a number of options that can (or must) be specified at the point of
@@ -123,8 +119,9 @@ TARGET            | `-b`         | One of DEBUG, RELEASE or NOOPT.
 TARGET_ARCH       | `-a`         | Architecture to build for.
 TOOL_CHAIN_TAG    | `-t`         | Toolchain profile to use for building.
 
-There is also MAX_CONCURRENT_THREAD_NUMBER (`-n`), roughly equivalent to
-`make -j`.
+The `build` command will automatically determine the number of available cpus
+and enable parallell builds. If you wish to restrict the parallellism, the `-n`
+option specifies how many threads to use.
 
 When specified on command line, `-b` can be repeated multiple times in order to
 build multiple targets sequentially.
@@ -133,21 +130,10 @@ After a successful build, the resulting images can be found in
 `Build/{Platform Name}/{TARGET}_{TOOL_CHAIN_TAG}/FV`.
 
 ### Build a platform
-The main build process _can_ run in parallel - so figure out how many threads we
-have available.
-
-```
-$ getconf _NPROCESSORS_ONLN
-8
-```
-OK, so we have 8 CPUs - let's tell the build to use a little more than that:
-```
-$ NUM_CPUS=$((`getconf _NPROCESSORS_ONLN` + 2))
-```
 For the toolchain tag, use GCC5 for gcc version 5 or later, GCC4x for
 earlier versions, or CLANG35/CLANG38 as appropriate when building with clang.
 ```
-$ build -n $NUM_CPUS -a AARCH64 -t GCC5 -p Platform/ARM/JunoPkg/ArmJuno.dsc
+$ build -a AARCH64 -t GCC5 -p Platform/ARM/JunoPkg/ArmJuno.dsc
 ```
 (Note that the description file gets resolved by the build command through
 searching in all locations specified in **PACKAGES_PATH**.)
