@@ -56,11 +56,11 @@ X64                 | x86_64-linux-gnu-
 \* i386, i486, i586 or i686
 
 ### GCC
-Linaro provides GCC toolchains for
-[aarch64-linux-gnu](https://releases.linaro.org/components/toolchain/binaries/latest/aarch64-linux-gnu/)
-and [arm-linux-gnueabihf](https://releases.linaro.org/components/toolchain/binaries/latest/arm-linux-gnueabihf/)
-compiled to run on x86_64/i686 Linux and i686 Windows. Some Linux distributions
-provide their own packaged cross-toolchains.
+ARM provides binary downloads of prebuilt GCC cross-toolchains for
+[aarch64-linux-gnu and arm-linux-gnueabihf](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads)
+compiled to run on i686 Windows as well as x86_64 and aarch64
+(for arm-linux-gnueabihf) x86_64 Linux.
+Some Linux distributions provide their own packaged cross-toolchains.
 
 ### clang
 Clang does not require separate cross compilers, but it does need a
