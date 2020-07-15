@@ -159,7 +159,8 @@ build command which toolchain to use. We do this by setting the environment
 variable `{TOOL_CHAIN_TAG}_{TARGET_ARCH}_PREFIX` - in the case above,
 **GCC5_AARCH64_PREFIX**.
 
-So, referring to the cross compiler toolchain table above, we should prepend the `build` command line with `GCC5_AARCH64_PREFIX=aarch64-linux-gnu-`.
+So, referring to the cross compiler toolchain table above, we should prepend the
+`build` command line with `GCC5_AARCH64_PREFIX=aarch64-linux-gnu-`.
 
 ## Using uefi-tools helper scripts
 uefi-tools is a completely unofficial set of helper-scripts developed by Linaro.
