@@ -147,6 +147,9 @@ variable `{TOOL_CHAIN_TAG}_{TARGET_ARCH}_PREFIX` - in the case above,
 
 So, referring to the cross compiler toolchain table above, we should prepend the
 `build` command line with `GCC5_AARCH64_PREFIX=aarch64-linux-gnu-`.
+```
+$ GCC5_AARCH64_PREFIX=aarch64-linux-gnu- build -a AARCH64 -t GCC5 -p Platform/ARM/JunoPkg/ArmJuno.dsc
+```
 
 ## Using uefi-tools helper scripts
 uefi-tools is a completely unofficial set of helper-scripts developed by Linaro.
