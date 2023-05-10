@@ -7,14 +7,24 @@
 *
 **/
 
+#include <Library/ArmSmcLib.h>
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/NonDiscoverableDeviceRegistrationLib.h>
 #include <Library/PcdLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiDriverEntryPoint.h>
+#include <IndustryStandard/ArmStdSmc.h>
 
 #include <Protocol/FdtClient.h>
+
+/* those probably should go into IndustryStandard/ArmStdSmc.h */
+#define SMC_FASTCALL       0x80000000
+#define SMC64_FUNCTION     (SMC_FASTCALL   | 0x40000000)
+#define SIP_FUNCTION       (SMC64_FUNCTION | 0x02000000)
+#define SIP_FUNCTION_ID(n) (SIP_FUNCTION   | (n))
+
+#define SIP_SVC_VERSION  SIP_FUNCTION_ID(1)
 
 EFI_STATUS
 EFIAPI
@@ -26,6 +36,9 @@ InitializeSbsaQemuPlatformDxe (
   EFI_STATUS                     Status;
   UINTN                          Size;
   VOID*                          Base;
+  UINTN                          Arg0;
+  UINTN                          Arg1;
+  UINTN                          Result;
 
   DEBUG ((DEBUG_INFO, "%a: InitializeSbsaQemuPlatformDxe called\n", __FUNCTION__));
 
@@ -50,6 +63,20 @@ InitializeSbsaQemuPlatformDxe (
             __FUNCTION__, Base, Status));
     return Status;
   }
+
+  Result = ArmCallSmc0 (SIP_SVC_VERSION, &Arg0, &Arg1, NULL);
+  if (Result == SMC_ARCH_CALL_SUCCESS)
+  {
+        Result = PcdSet32S (PcdPlatformVersionMajor, Arg0);
+        ASSERT_EFI_ERROR (Result);
+        Result = PcdSet32S (PcdPlatformVersionMinor, Arg1);
+        ASSERT_EFI_ERROR (Result);
+  }
+
+  Arg0 = PcdGet32 (PcdPlatformVersionMajor);
+  Arg1 = PcdGet32 (PcdPlatformVersionMinor);
+
+  DEBUG ((DEBUG_INFO, "Platform version: %d.%d\n", Arg0, Arg1));
 
   return EFI_SUCCESS;
 }
