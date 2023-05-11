@@ -25,6 +25,8 @@
 #define SIP_FUNCTION_ID(n) (SIP_FUNCTION   | (n))
 
 #define SIP_SVC_VERSION  SIP_FUNCTION_ID(1)
+#define SIP_SVC_GET_GICD SIP_FUNCTION_ID(2)
+#define SIP_SVC_GET_GICR SIP_FUNCTION_ID(3)
 
 EFI_STATUS
 EFIAPI
@@ -77,6 +79,28 @@ InitializeSbsaQemuPlatformDxe (
   Arg1 = PcdGet32 (PcdPlatformVersionMinor);
 
   DEBUG ((DEBUG_INFO, "Platform version: %d.%d\n", Arg0, Arg1));
+
+  Result = ArmCallSmc0 (SIP_SVC_GET_GICD, &Arg0, NULL, NULL);
+  if (Result == SMC_ARCH_CALL_SUCCESS)
+  {
+        Result = PcdSet32S (PcdGicDistributorBase, Arg0);
+        ASSERT_EFI_ERROR (Result);
+  }
+
+  Arg0 = PcdGet32 (PcdGicDistributorBase);
+
+  DEBUG ((DEBUG_INFO, "GICD base: 0x%x\n", Arg0));
+
+  Result = ArmCallSmc0 (SIP_SVC_GET_GICR, &Arg0, NULL, NULL);
+  if (Result == SMC_ARCH_CALL_SUCCESS)
+  {
+        Result = PcdSet32S (PcdGicRedistributorsBase, Arg0);
+        ASSERT_EFI_ERROR (Result);
+  }
+
+  Arg0 = PcdGet32 (PcdGicRedistributorsBase);
+
+  DEBUG ((DEBUG_INFO, "GICR base: 0x%x\n", Arg0));
 
   return EFI_SUCCESS;
 }
