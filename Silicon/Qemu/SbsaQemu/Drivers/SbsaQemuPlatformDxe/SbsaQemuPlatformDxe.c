@@ -83,22 +83,22 @@ InitializeSbsaQemuPlatformDxe (
   Result = ArmCallSmc0 (SIP_SVC_GET_GICD, &Arg0, NULL, NULL);
   if (Result == SMC_ARCH_CALL_SUCCESS)
   {
-        Result = PcdSet32S (PcdGicDistributorBase, Arg0);
+        Result = PcdSet64S (PcdGicDistributorBase, Arg0);
         ASSERT_EFI_ERROR (Result);
   }
 
-  Arg0 = PcdGet32 (PcdGicDistributorBase);
+  Arg0 = PcdGet64 (PcdGicDistributorBase);
 
   DEBUG ((DEBUG_INFO, "GICD base: 0x%x\n", Arg0));
 
   Result = ArmCallSmc0 (SIP_SVC_GET_GICR, &Arg0, NULL, NULL);
   if (Result == SMC_ARCH_CALL_SUCCESS)
   {
-        Result = PcdSet32S (PcdGicRedistributorsBase, Arg0);
+        Result = PcdSet64S (PcdGicRedistributorsBase, Arg0);
         ASSERT_EFI_ERROR (Result);
   }
 
-  Arg0 = PcdGet32 (PcdGicRedistributorsBase);
+  Arg0 = PcdGet64 (PcdGicRedistributorsBase);
 
   DEBUG ((DEBUG_INFO, "GICR base: 0x%x\n", Arg0));
 
