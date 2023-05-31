@@ -26,8 +26,8 @@ InitializeSbsaQemuPlatformDxe (
   )
 {
   EFI_STATUS                     Status;
-  UINTN                          Size;
-  VOID*                          Base;
+  UINTN                          AhciSize, XhciSize;
+  VOID                           *AhciBase, *XhciBase;
   UINTN                          Arg0;
   UINTN                          Arg1;
   UINTN                          SmcResult;
@@ -35,13 +35,13 @@ InitializeSbsaQemuPlatformDxe (
 
   DEBUG ((DEBUG_INFO, "%a: InitializeSbsaQemuPlatformDxe called\n", __FUNCTION__));
 
-  Base = (VOID*)(UINTN)PcdGet64 (PcdPlatformAhciBase);
-  ASSERT (Base != NULL);
-  Size = (UINTN)PcdGet32 (PcdPlatformAhciSize);
-  ASSERT (Size != 0);
+  AhciBase = (VOID*)(UINTN)PcdGet64 (PcdPlatformAhciBase);
+  ASSERT (AhciBase != NULL);
+  AhciSize = (UINTN)PcdGet32 (PcdPlatformAhciSize);
+  ASSERT (AhciSize != 0);
 
   DEBUG ((DEBUG_INFO, "%a: Got platform AHCI %llx %u\n",
-          __FUNCTION__, Base, Size));
+          __FUNCTION__, AhciBase, AhciSize));
 
   Status = RegisterNonDiscoverableMmioDevice (
                    NonDiscoverableDeviceTypeAhci,
@@ -49,11 +49,33 @@ InitializeSbsaQemuPlatformDxe (
                    NULL,
                    NULL,
                    1,
-                   Base, Size);
+                   AhciBase, AhciSize);
 
   if (EFI_ERROR(Status)) {
     DEBUG ((DEBUG_ERROR, "%a: NonDiscoverable: Cannot install AHCI device @%p (Staus == %r)\n",
-            __FUNCTION__, Base, Status));
+            __FUNCTION__, AhciBase, Status));
+    return Status;
+  }
+
+  XhciBase = (VOID*)(UINTN)PcdGet64 (PcdPlatformXhciBase);
+  ASSERT (XhciBase != NULL);
+  XhciSize = (UINTN)PcdGet32 (PcdPlatformXhciSize);
+  ASSERT (XhciSize != 0);
+
+  DEBUG ((DEBUG_INFO, "%a: Got platform XHCI %llx %u\n",
+          __FUNCTION__, XhciBase, XhciSize));
+
+  Status = RegisterNonDiscoverableMmioDevice (
+                   NonDiscoverableDeviceTypeXhci,
+                   NonDiscoverableDeviceDmaTypeCoherent,
+                   NULL,
+                   NULL,
+                   1,
+                   XhciBase, XhciSize);
+
+  if (EFI_ERROR(Status)) {
+    DEBUG ((DEBUG_ERROR, "%a: NonDiscoverable: Cannot install XHCI device @%p (Staus == %r)\n",
+            __FUNCTION__, XhciBase, Status));
     return Status;
   }
 
