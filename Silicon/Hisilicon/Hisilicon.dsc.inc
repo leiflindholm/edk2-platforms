@@ -232,8 +232,6 @@
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdInstallAcpiSdtProtocol|TRUE
 
-  gArmTokenSpaceGuid.PcdArmGicV3WithV2Legacy|FALSE
-
 [PcdsFixedAtBuild.common]
   #
   # IO is mapped to memory space, so we use the same size of
